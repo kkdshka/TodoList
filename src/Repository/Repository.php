@@ -12,15 +12,19 @@ use Kkdshka\TodoList\Model\Task;
 interface Repository {
     
     /**
-     * Saves task.
-     * 
+     * Saves new task.
      * @param Task $task Task to save.
      */
-    function save(Task $task);
+    function create(Task $task);
+    
+    /**
+     * Updates existed task.
+     * @param Task $task Task to update.
+     */
+    function update(Task $task);
     
     /**
      * Deletes task.
-     * 
      * @param Task $task Task to delete.
      */
     function delete(Task $task);

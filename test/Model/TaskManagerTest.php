@@ -22,7 +22,7 @@ class TaskManagerTest extends TestCase
         
         $taskManager->create('Test subject');
         
-        Phake::verify($repository)->save(new Task('Test subject'));
+        Phake::verify($repository)->create(new Task('Test subject'));
     }
 
     /**
@@ -38,7 +38,7 @@ class TaskManagerTest extends TestCase
         $taskManager->complete($task);
         
         Phake::verify($task)->complete();
-        Phake::verify($repository)->save($task);
+        Phake::verify($repository)->update($task);
     }
 
     /**

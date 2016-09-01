@@ -2,7 +2,7 @@
 
 namespace Kkdshka\TodoList\Model;
 
-use \Kkdshka\TodoList\ {
+use Kkdshka\TodoList\ {
     Repository\Repository,
     Model\Task
 };
@@ -35,7 +35,7 @@ class TaskManager {
      */
     public function create(string $subject) {
         $task = new Task($subject);
-        $this->repository->save($task);
+        $this->repository->create($task);
     }
     
     /**
@@ -45,7 +45,7 @@ class TaskManager {
      */
     public function complete(Task $task) {
         $task->complete();
-        $this->repository->save($task);
+        $this->repository->update($task);
     }
     
     /**
@@ -58,7 +58,7 @@ class TaskManager {
     }
     
     /**
-     * @return Task[] All tasks.
+     * @return Tasks[] All tasks.
      */
     public function getAll() : array {
         return $this->repository->getAll();
