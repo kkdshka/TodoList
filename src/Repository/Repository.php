@@ -33,4 +33,9 @@ interface Repository {
      * @return Task[] All tasks.
      */
     function getAll() : array;
+    
+    /**
+     * Frees all resources.
+     */
+    function close();
 }

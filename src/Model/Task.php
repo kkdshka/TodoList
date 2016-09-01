@@ -10,6 +10,12 @@ namespace Kkdshka\TodoList\Model;
 class Task {
     
     /**
+     *
+     * @var int 
+     */
+    private $id;
+    
+    /**
      * Task's subject.
      * 
      * @var string
@@ -50,5 +56,33 @@ class Task {
      */
     public function isCompleted() : bool {
         return $this->isCompleted;
+    }
+    
+    /**
+     * Return subject's id.
+     * @return int
+     */
+    public function getId() : int {
+        return $this->id;
+    }
+    
+    /**
+     * Set subject's id.
+     * @param int $id
+     * @throws \BadMethodCallException When task already has id.
+     */
+    public function setId(int $id) {
+        if (isset($this->id)) {
+            throw new \BadMethodCallException("Id had been already set.");
+        }
+        $this->id = $id;
+    }
+    
+    /**
+     * Return true if task has id.
+     * @return bool
+     */
+    public function hasId() : bool {
+        return isset($this->id);
     }
 }
