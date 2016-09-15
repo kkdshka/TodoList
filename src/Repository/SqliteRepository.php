@@ -1,5 +1,7 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace Kkdshka\TodoList\Repository;
 
 use Kkdshka\TodoList\Model\Task;
@@ -42,7 +44,7 @@ class SqliteRepository implements Repository {
         $this->inTransaction(function() use ($task) {
             $stmt = $this->pdo->prepare("INSERT INTO tasks (subject, is_completed) VALUES (:subject, :is_completed)");
             $stmt->execute($this->toStmtParams($task));
-            $task->setId($this->pdo->lastInsertId());
+            $task->setId((int) $this->pdo->lastInsertId());
         });
     }
 
@@ -142,7 +144,7 @@ class SqliteRepository implements Repository {
      */
     private function toTask(array $taskData) : Task {
         $task = new Task($taskData['subject']);
-        $task->setId($taskData['id']);
+        $task->setId((int) $taskData['id']);
         if ($taskData['is_completed'] == 1) {
             $task->complete();
         }

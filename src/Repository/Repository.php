@@ -1,5 +1,7 @@
 <?php
 
+declare (strict_types = 1);
+
 namespace Kkdshka\TodoList\Repository;
 
 use Kkdshka\TodoList\Model\Task;
