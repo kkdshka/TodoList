@@ -109,6 +109,18 @@ class CsvRepository implements Repository {
     /**
      * {@inheritDoc}
      */
+    public function findTaskById(int $id) : Task {
+        if (!array_key_exists($id, $this->tasks)) {
+            throw new NotFoundException("Can't find task with id = $id");
+        }
+        else {
+            return $this->tasks[$id];
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public function close() {
         if ($this->lockStorageFile) {
             if (!flock($this->storageHandle, LOCK_UN)) {

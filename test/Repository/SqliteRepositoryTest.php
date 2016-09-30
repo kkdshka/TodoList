@@ -220,4 +220,28 @@ class SqliteRepositoryTest extends TestCase {
         $this->repository->delete($task);
     }
     
+    /**
+     * @test
+     * @expectedException Kkdshka\TodoList\Repository\NotFoundException
+     * @expectedExceptionMessage Can't find task with id = 1
+     * @covers Kkdshka\TodoList\Repository\SqliteRepository::findTaskById
+     */
+    public function shouldNotFindUnsavedTaskById() {
+        $this->repository->findTaskById(1);
+    }
+    
+    /**
+     * @test
+     * @depends shouldCreateNewTask
+     * @covers Kkdshka\TodoList\Repository\SqliteRepository::findTaskById
+     */
+    public function shouldFindTaskById() {
+        $firstTask = new Task("First test subject");
+        $secondTask = new Task("Second test subject");
+        
+        $this->repository->create($firstTask);
+        $this->repository->create($secondTask);
+        
+        $this->assertEquals($firstTask, $this->repository->findTaskById(1));
+    }
 }

@@ -79,6 +79,21 @@ class SqliteRepository implements Repository {
     }
     
     /**
+     * {@inheritDoc}
+     */
+    public function findTaskById(int $id) : Task {
+        $stmt = $this->pdo->query("SELECT * FROM tasks WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        $taskData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($taskData)) {
+            throw new NotFoundException("Can't find task with id = $id");
+        }
+        else {
+            return array_map([$this, "toTask"], $taskData)[0];
+        }
+    }
+    
+    /**
      * Close PDO.
      */
     public function close() {

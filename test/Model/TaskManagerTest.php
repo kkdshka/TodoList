@@ -15,8 +15,7 @@ class TaskManagerTest extends TestCase
      * @test
      * @covers Kkdshka\TodoList\Model\TaskManager::create
      */
-    public function shouldCreateTask()
-    {
+    public function shouldCreateTask() {
         $repository = Phake::mock(Repository::class);
         $taskManager = new TaskManager($repository);
         
@@ -29,8 +28,7 @@ class TaskManagerTest extends TestCase
      * @test
      * @covers Kkdshka\TodoList\Model\TaskManager::complete
      */
-    public function shouldCompleteTask()
-    {
+    public function shouldCompleteTask() {
         $repository = Phake::mock(Repository::class);
         $task = Phake::mock(Task::class);
         $taskManager = new TaskManager($repository);
@@ -45,8 +43,7 @@ class TaskManagerTest extends TestCase
      * @test
      * @covers Kkdshka\TodoList\Model\TaskManager::delete
      */
-    public function shouldDeleteTask()
-    {
+    public function shouldDeleteTask() {
         $repository = Phake::mock(Repository::class);
         $task = Phake::mock(Task::class);
         $taskManager = new TaskManager($repository);
@@ -60,8 +57,7 @@ class TaskManagerTest extends TestCase
      * @test
      * @covers Kkdshka\TodoList\Model\TaskManager::getAll
      */
-    public function shouldGetAllTasks()
-    {
+    public function shouldGetAllTasks() {
         $repository = Phake::mock(Repository::class);
         $taskManager = new TaskManager($repository);
         $expectedTasks = [
@@ -75,5 +71,19 @@ class TaskManagerTest extends TestCase
         
         Phake::verify($repository)->getAll();
         $this->assertEquals($expectedTasks, $tasks);
+    }
+    
+    /**
+     * @test
+     * @covers Kkdshka\TodoList\Model\TaskManager::shouldFindTaskById
+     */
+    public function shouldFindTaskById() {
+        $repository = Phake::mock(Repository::class);
+        $task = Phake::mock(Task::class);
+        $taskManager = new TaskManager($repository);
+        
+        Phake::when($repository)->findTaskById(1)->thenReturn($task);
+        
+        $this->assertEquals($task, $taskManager->findTaskById(1));
     }
 }

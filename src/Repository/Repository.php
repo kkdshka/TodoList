@@ -40,4 +40,11 @@ interface Repository {
      * Frees all resources.
      */
     function close();
+    
+    /**
+     * Returns task with given id.
+     * @param int $id Task id.
+     * @throws NotFoundException If task with given id doesn't exists.
+     */
+    function findTaskById(int $id) : Task;
 }

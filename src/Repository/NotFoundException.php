@@ -7,7 +7,7 @@ namespace Kkdshka\TodoList\Repository;
 use RuntimeException;
 
 /**
- * Description of NotFoundException
+ * Throws if entity not found in repository.
  *
  * @author Ксю
  */

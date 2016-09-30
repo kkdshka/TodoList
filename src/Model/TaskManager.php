@@ -65,4 +65,13 @@ class TaskManager {
     public function getAll() : array {
         return $this->repository->getAll();
     }
+    
+    /**
+     * Returns task with given id.
+     * @param int $id Given id.
+     * @return Task Task with given id.
+     */
+    public function findTaskById(int $id) : Task {
+        return $this->repository->findTaskById($id);
+    }
 }
