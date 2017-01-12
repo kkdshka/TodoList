@@ -46,11 +46,21 @@ class RepositoryFactoryTest extends TestCase {
 
     /**
      * @test
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Unknown protocol unexisted
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Unknown protocol unexisted in url unexisted:path/to/file
      * @covers Kkdshka\TodoList\Repository\RepositoryFactory::create
      */
-    public function shouldNotCreateOtherRepository() {
-        $this->factory->create("unexisted:" . self::$filename);
+    public function shouldNotCreateRepositoryWithUnknownProtocol() {
+        $this->factory->create("unexisted:path/to/file");
+    }
+    
+    /**
+     * @test
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Empty protocol in url path/to/file/without/protocol
+     * @covers Kkdshka\TodoList\Repository\RepositoryFactory::create
+     */
+    public function shouldNotCreateRepositoryWithoutProtocol() {
+        $this->factory->create("path/to/file/without/protocol");
     }
 }

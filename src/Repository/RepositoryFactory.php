@@ -4,7 +4,7 @@ declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Repository;
 
-use RuntimeException;
+use InvalidArgumentException;
 
 /**
  * Factory which choose which repository will be used.
@@ -17,10 +17,13 @@ class RepositoryFactory {
      * Creates new repository according to connection URL.
      * @param string $connectionUrl 
      * @return \Kkdshka\TodoList\Repository\Repository
-     * @throws RuntimeException When connection URL with unknown protocol was given.
+     * @throws InvalidArgumentException When connection URL with unknown protocol or without protocol was given.
      */
     public function create(string $connectionUrl) : Repository {
         $protocol = stristr($connectionUrl, ":", true);
+        if (empty($protocol)) {
+            throw new InvalidArgumentException("Empty protocol in url $connectionUrl");
+        }
         switch ($protocol) {
             case "csv":
                 // We use pseudo-protocol "csv" to make connection URL for CsvRepository look like PDO connection URL
@@ -30,7 +33,7 @@ class RepositoryFactory {
             case "sqlite":
                 return new SqliteRepository($connectionUrl);
             default:
-                throw new RuntimeException("Unknown protocol $protocol");
+                throw new InvalidArgumentException("Unknown protocol $protocol in url $connectionUrl");
         }
         
     }
