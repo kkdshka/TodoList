@@ -179,7 +179,7 @@ class CsvRepository implements Repository {
     private function toTask(array $tasksData) : Task {
         list($id, $subject, $isCompleted) = $tasksData;
         $task = new Task($subject);
-        $task->setId($id);
+        $task->setId((int) $id);
         if ($isCompleted) {
             $task->complete();
         }

@@ -231,4 +231,11 @@ class CsvRepositoryTest extends TestCase {
         $this->assertEquals($firstTask, $this->repository->findTaskById(1));
     }
     
+    /**
+     * @test
+     */
+    public function shouldFixIdType() {
+        $repository = new CsvRepository(__DIR__ . '/../data/todolist.csv');
+        $this->assertCount(3, $repository->getAll());
+    }
 }
