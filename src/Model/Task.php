@@ -12,21 +12,19 @@ namespace Kkdshka\TodoList\Model;
 class Task {
     
     /**
-     *
+     * Task's id.
      * @var int 
      */
     private $id;
     
     /**
      * Task's subject.
-     * 
      * @var string
      */
     private $subject;
     
     /**
      * Flag, is task completed or not.
-     * 
      * @var bool 
      */
     private $isCompleted;

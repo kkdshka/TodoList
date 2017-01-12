@@ -11,14 +11,12 @@ use Kkdshka\TodoList\ {
 
 /**
  * Manages tasks.
- *
  * @author Ксю
  */
 class TaskManager {
     
     /**
      * Task repository.
-     * 
      * @var Repository
      */
     private $repository;
@@ -32,7 +30,6 @@ class TaskManager {
 
     /**
      * Creates new task with given subject.
-     *  
      * @param string $subject Task's subject.
      */
     public function create(string $subject) {
@@ -42,7 +39,6 @@ class TaskManager {
     
     /**
      * Completes given task.
-     * 
      * @param Task $task Task to complete.
      */
     public function complete(Task $task) {
@@ -52,7 +48,6 @@ class TaskManager {
     
     /**
      * Deletes given task.
-     * 
      * @param Task $task Task to delete.
      */
     public function delete(Task $task) {
