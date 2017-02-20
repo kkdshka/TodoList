@@ -41,7 +41,7 @@ class CsvRepositoryTest extends TestCase {
                 
         $this->repository->create($task);
         
-        $this->assertEquals("1,\"Test subject\",\n", file_get_contents($this->filename));
+        $this->assertEquals("1,\"Test subject\",,3,New\n", file_get_contents($this->filename));
     }
     
     /**
@@ -52,10 +52,10 @@ class CsvRepositoryTest extends TestCase {
         $task = new Task("Test subject");
         
         $this->repository->create($task);
-        $task->complete();
+        $task->setPriority(5);
         $this->repository->update($task);
         
-        $this->assertEquals("1,\"Test subject\",1\n", file_get_contents($this->filename));
+        $this->assertEquals("1,\"Test subject\",,5,New\n", file_get_contents($this->filename));
     }
     
     /**
@@ -96,7 +96,7 @@ class CsvRepositoryTest extends TestCase {
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
         
-        $this->assertEquals("1,\"First test subject\",\n2,\"Second test subject\",\n", file_get_contents($this->filename)); 
+        $this->assertEquals("1,\"First test subject\",,3,New\n2,\"Second test subject\",,3,New\n", file_get_contents($this->filename)); 
     }
     
     /**
@@ -109,10 +109,10 @@ class CsvRepositoryTest extends TestCase {
         
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
-        $firstTask->complete();
+        $firstTask->setPriority(5);
         $this->repository->update($firstTask);
         
-        $this->assertEquals("1,\"First test subject\",1\n2,\"Second test subject\",\n", file_get_contents($this->filename));
+        $this->assertEquals("1,\"First test subject\",,5,New\n2,\"Second test subject\",,3,New\n", file_get_contents($this->filename));
     }
     
     /**
@@ -127,7 +127,7 @@ class CsvRepositoryTest extends TestCase {
         $this->repository->create($secondTask);
         $this->repository->delete($firstTask);
         
-        $this->assertEquals("2,\"Second test subject\",\n", file_get_contents($this->filename));
+        $this->assertEquals("2,\"Second test subject\",,3,New\n", file_get_contents($this->filename));
     }
     
     /**

@@ -11,19 +11,6 @@ class TaskTest extends TestCase {
 
     /**
      * @test
-     * @covers Kkdshka\TodoList\Model\Task::complete
-     */
-    public function shouldCompleteTask() {
-        $task = new Task('Test subject');
-        $this->assertFalse($task->isCompleted());
-        
-        $task->complete();
-        
-        $this->assertTrue($task->isCompleted());
-    }
-    
-    /**
-     * @test
      * @covers Kkdshka\TodoList\Model\Task::setId
      */
     public function shouldSetId() {
@@ -59,5 +46,27 @@ class TaskTest extends TestCase {
         $task->setId(1);
         
         $this->assertTrue($task->hasId());
+    }
+    
+    /**
+     * @test
+     * @covers Kkdshka\TodoList\Model\Task::setPriority
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid priority 7 given.
+     */
+    public function shouldNotAllowWrongPriority() {
+        $task = new Task('Test subject');
+        $task->setPriority(7);
+    }
+    
+    /**
+     * @test
+     * @covers Kkdshka\TodoList\Model\Task::setStatus
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid status strange given.
+     */
+    public function shouldNotAllowWrongStatus() {
+        $task = new Task('Test subject');
+        $task->setStatus('strange');
     }
 }

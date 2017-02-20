@@ -4,85 +4,83 @@ declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Model;
 
+use Kkdshka\TodoList\Model\{
+    Status,
+    Priority
+};
+use BadMethodCallException;
+use InvalidArgumentException;
+
 /**
  * Holds task data.
  *
  * @author Ксю
  */
 class Task {
-    
-    /**
-     * Task's id.
-     * @var int 
-     */
+
     private $id;
-    
-    /**
-     * Task's subject.
-     * @var string
-     */
     private $subject;
-    
-    /**
-     * Flag, is task completed or not.
-     * @var bool 
-     */
-    private $isCompleted;
-    
-    /**
-     * @param string $subject Task's subject.
-     */
-    public function __construct(string $subject) {
+    private $description;
+    private $priority;
+    private $status;
+
+    public function __construct(string $subject, string $description = "", int $priority = 3, string $status = "New") {
         $this->subject = $subject;
-        $this->isCompleted = false;
+        $this->description = $description;
+        $this->setPriority($priority);
+        $this->setStatus($status);
     }
-    
-    /**
-     * @return string Task's subject.
-     */
-    public function getSubject() : string {
+
+    public function getSubject(): string {
         return $this->subject;
     }
-    
-    /**
-     * Completes task.
-     */
-    public function complete() {
-        $this->isCompleted = true;
+
+    public function getDescription(): string {
+        return $this->description;
     }
-    
-    /**
-     * @return bool True if task is completed.
-     */
-    public function isCompleted() : bool {
-        return $this->isCompleted;
+
+    public function getPriority(): int {
+        return $this->priority;
     }
-    
-    /**
-     * Return subject's id.
-     * @return int
-     */
-    public function getId() : int {
+
+    public function getStatus(): string {
+        return $this->status;
+    }
+
+    public function getId(): int {
         return $this->id;
     }
     
-    /**
-     * Set subject's id.
-     * @param int $id
-     * @throws \BadMethodCallException When task already has id.
-     */
-    public function setId(int $id) {
+    public function setSubject(string $subject) {
+        $this->subject = $subject;
+    }
+
+    public function setDescription(string $description) {
+        $this->description = $description;
+    }
+
+    public function setPriority(int $priority) {
+        if (!Priority::isPriority($priority)) {
+            throw new InvalidArgumentException("Invalid priority $priority given.");
+        }
+        $this->priority = $priority;
+    }
+    
+    public function setStatus(string $status) {
+        if (!Status::isStatus($status)) {
+            throw new InvalidArgumentException("Invalid status $status given.");
+        }
+        $this->status = $status;
+    }
+
+        public function setId(int $id) {
         if (isset($this->id)) {
-            throw new \BadMethodCallException("Id had been already set.");
+            throw new BadMethodCallException("Id had been already set.");
         }
         $this->id = $id;
     }
-    
-    /**
-     * Return true if task has id.
-     * @return bool
-     */
-    public function hasId() : bool {
+
+    public function hasId(): bool {
         return isset($this->id);
     }
 }

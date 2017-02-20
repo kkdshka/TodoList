@@ -4,7 +4,7 @@ declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Model;
 
-use Kkdshka\TodoList\ {
+use Kkdshka\TodoList\{
     Repository\Repository,
     Model\Task
 };
@@ -14,13 +14,13 @@ use Kkdshka\TodoList\ {
  * @author Ксю
  */
 class TaskManager {
-    
+
     /**
      * Task repository.
      * @var Repository
      */
     private $repository;
-    
+
     /**
      * @param Repository $repository Task repository.
      */
@@ -29,20 +29,16 @@ class TaskManager {
     }
 
     /**
-     * Creates new task with given subject.
-     * @param string $subject Task's subject.
+     * Creates new task.
      */
-    public function create(string $subject) {
-        $task = new Task($subject);
+    public function create(Task $task) {
         $this->repository->create($task);
     }
-    
+
     /**
-     * Completes given task.
-     * @param Task $task Task to complete.
+     * Updates existed task.
      */
-    public function complete(Task $task) {
-        $task->complete();
+    public function update(Task $task) {
         $this->repository->update($task);
     }
     
@@ -53,20 +49,20 @@ class TaskManager {
     public function delete(Task $task) {
         $this->repository->delete($task);
     }
-    
+
     /**
      * @return Tasks[] All tasks.
      */
-    public function getAll() : array {
+    public function getAll(): array {
         return $this->repository->getAll();
     }
-    
+
     /**
      * Returns task with given id.
      * @param int $id Given id.
      * @return Task Task with given id.
      */
-    public function findTaskById(int $id) : Task {
+    public function findTaskById(int $id): Task {
         return $this->repository->findTaskById($id);
     }
 }

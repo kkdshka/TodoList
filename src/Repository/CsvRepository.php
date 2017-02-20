@@ -86,7 +86,7 @@ class CsvRepository implements Repository {
     public function getAll(): array {
         return array_values($this->tasks);
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -105,7 +105,7 @@ class CsvRepository implements Repository {
         $this->tasks[$task->getId()] = $task;
         $this->saveTasksToCsv();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -177,12 +177,9 @@ class CsvRepository implements Repository {
      * @return Task
      */
     private function toTask(array $tasksData) : Task {
-        list($id, $subject, $isCompleted) = $tasksData;
-        $task = new Task($subject);
+        list($id, $subject, $description, $priority, $status) = $tasksData;
+        $task = new Task($subject, $description, (int) $priority, $status);
         $task->setId((int) $id);
-        if ($isCompleted) {
-            $task->complete();
-        }
         return $task;
     }
     
@@ -192,7 +189,7 @@ class CsvRepository implements Repository {
      * @return array Task data
      */
     private function toArray(Task $task) : array {
-        return [$task->getId(), $task->getSubject(), $task->isCompleted()];
+        return [$task->getId(), $task->getSubject(), $task->getDescription(), $task->getPriority(), $task->getStatus()];
     }
     
     /**

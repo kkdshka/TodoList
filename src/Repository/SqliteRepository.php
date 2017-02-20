@@ -10,54 +10,54 @@ use InvalidArgumentException;
 use PDO;
 use Exception;
 
-
 /**
  * Sqlite repository.
  * @author Ксю
  */
 class SqliteRepository implements Repository {
-    
+
     /**
      * PDO object.
      * @var PDO
      */
     private $pdo;
-   
+
     /**
      * @param string $connectionUrl Path to storage.
      */
     public function __construct(string $connectionUrl) {
         $this->pdo = new PDO($connectionUrl);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $stmt = $this->pdo->prepare(
-                "CREATE TABLE IF NOT EXISTS tasks("
+        $query = "CREATE TABLE IF NOT EXISTS tasks("
                 . "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
                 . "subject VARCHAR NOT NULL, "
-                . "is_completed INTEGER NOT NULL)");
+                . "description TEXT, "
+                . "status VARCHAR NOT NULL, "
+                . "priority INTEGER NOT NULL)";
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function create(Task $task) {
         $this->inTransaction(function() use ($task) {
-            $stmt = $this->pdo->prepare("INSERT INTO tasks (subject, is_completed) VALUES (:subject, :is_completed)");
+            $stmt = $this->pdo->prepare("INSERT INTO tasks (subject, description, priority, status) VALUES (:subject, :description, :priority, :status)");
             $stmt->execute($this->toStmtParams($task));
             $task->setId((int) $this->pdo->lastInsertId());
         });
     }
 
-    
     /**
      * {@inheritDoc}
      */
     public function update(Task $task) {
         $this->assertExists($task);
-        $stmt = $this->pdo->prepare("UPDATE tasks SET subject = :subject, is_completed = :is_completed WHERE id = :id");
+        $stmt = $this->pdo->prepare("UPDATE tasks SET subject = :subject, description = :description, priority = :priority, status = :status WHERE id = :id");
         $stmt->execute($this->toStmtParams($task));
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -65,7 +65,6 @@ class SqliteRepository implements Repository {
         $this->assertExists($task);
         $stmt = $this->pdo->prepare("DELETE FROM tasks WHERE id = :id");
         $stmt->execute(['id' => $task->getId()]);
-        
     }
 
     /**
@@ -74,25 +73,24 @@ class SqliteRepository implements Repository {
     public function getAll(): array {
         $stmt = $this->pdo->query("SELECT * FROM tasks");
         $tasksData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         return array_map([$this, "toTask"], $tasksData);
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public function findTaskById(int $id) : Task {
+    public function findTaskById(int $id): Task {
         $stmt = $this->pdo->query("SELECT * FROM tasks WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $taskData = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($taskData)) {
             throw new NotFoundException("Can't find task with id = $id");
-        }
-        else {
+        } else {
             return array_map([$this, "toTask"], $taskData)[0];
         }
     }
-    
+
     /**
      * Close PDO.
      */
@@ -107,18 +105,17 @@ class SqliteRepository implements Repository {
      */
     private function inTransaction(callable $block) {
         $this->pdo->beginTransaction();
-        
+
         try {
             $block();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->pdo->rollBack();
             throw $e;
         }
-        
+
         $this->pdo->commit();
     }
-    
+
     /**
      * Ensures if task exicts in repository.
      * @throws InvalidArgumentException When task doesn't have id.
@@ -135,34 +132,33 @@ class SqliteRepository implements Repository {
             throw new NotFoundException();
         }
     }
-    
+
     /**
      * Extracts data from task and returns it as array.
      * @param Task $task Task object.
      * @return array Task data.
      */
-    private function toStmtParams(Task $task) : array {
-        $isCompleted = 1;
-        if (!$task->isCompleted()) {
-            $isCompleted = 0;
-        }
+    private function toStmtParams(Task $task): array {
+        $params = [
+            'subject' => $task->getSubject(),
+            'description' => $task->getDescription(),
+            'priority' => $task->getPriority(),
+            'status' => $task->getStatus()
+        ];
         if ($task->hasId()) {
-           return ['subject' => $task->getSubject(), 'is_completed' => "$isCompleted", 'id' => $task->getId()];
+            $params['id'] = $task->getId();
         }
-        return ['subject' => $task->getSubject(), 'is_completed' => "$isCompleted"];
+        return $params;
     }
-    
+
     /**
      * Return task from task data.
      * @param array $taskData Task data.
      * @return Task object.
      */
-    private function toTask(array $taskData) : Task {
-        $task = new Task($taskData['subject']);
+    private function toTask(array $taskData): Task {
+        $task = new Task($taskData['subject'], $taskData['description'], (int) $taskData['priority'], $taskData['status']);
         $task->setId((int) $taskData['id']);
-        if ($taskData['is_completed'] == 1) {
-            $task->complete();
-        }
         return $task;
     }
 }

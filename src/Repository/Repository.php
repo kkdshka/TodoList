@@ -14,8 +14,8 @@ use Kkdshka\TodoList\Model\Task;
 interface Repository {
     
     /**
-     * Saves new task.
-     * @param Task $task Task to save.
+     * Creates new task.
+     * @param Task $task Task to create.
      */
     function create(Task $task);
     
