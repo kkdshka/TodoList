@@ -7,7 +7,7 @@ namespace Kkdshka\TodoList\Model;
 /**
  * List of possible priority for Task.
  * 
- * @author Ксю
+ * @author kkdshka
  */
 class Priority {
 

@@ -11,7 +11,7 @@ use Kkdshka\TodoList\{
 
 /**
  * Manages tasks.
- * @author Ксю
+ * @author kkdshka
  */
 class TaskManager {
 

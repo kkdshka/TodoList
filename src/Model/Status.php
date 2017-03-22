@@ -7,7 +7,7 @@ namespace Kkdshka\TodoList\Model;
 /**
  * List of possible status for Task.
  *
- * @author Ксю
+ * @author kkdshka
  */
 class Status {
 

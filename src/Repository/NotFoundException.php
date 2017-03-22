@@ -9,7 +9,7 @@ use RuntimeException;
 /**
  * Throws if entity not found in repository.
  *
- * @author Ксю
+ * @author kkdshka
  */
 class NotFoundException extends RuntimeException {
     

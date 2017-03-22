@@ -9,7 +9,7 @@ use InvalidArgumentException;
 /**
  * Factory which choose which repository will be used.
  *
- * @author Ксю
+ * @author kkdshka
  */
 class RepositoryFactory {
     

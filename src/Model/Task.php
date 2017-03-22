@@ -14,7 +14,7 @@ use InvalidArgumentException;
 /**
  * Holds task data.
  *
- * @author Ксю
+ * @author kkdshka
  */
 class Task {
 
@@ -50,7 +50,7 @@ class Task {
     public function getId(): int {
         return $this->id;
     }
-    
+
     public function setSubject(string $subject) {
         $this->subject = $subject;
     }
@@ -65,7 +65,7 @@ class Task {
         }
         $this->priority = $priority;
     }
-    
+
     public function setStatus(string $status) {
         if (!Status::isStatus($status)) {
             throw new InvalidArgumentException("Invalid status $status given.");
@@ -73,7 +73,7 @@ class Task {
         $this->status = $status;
     }
 
-        public function setId(int $id) {
+    public function setId(int $id) {
         if (isset($this->id)) {
             throw new BadMethodCallException("Id had been already set.");
         }

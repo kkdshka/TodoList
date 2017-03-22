@@ -12,7 +12,7 @@ use Exception;
 
 /**
  * Sqlite repository.
- * @author Ксю
+ * @author kkdshka
  */
 class SqliteRepository implements Repository {
 

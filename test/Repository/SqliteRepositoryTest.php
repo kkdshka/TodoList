@@ -9,7 +9,7 @@ use PDO;
 /**
  * Description of CsvRepositoryTest
  *
- * @author Ксю
+ * @author kkdshka
  */
 class SqliteRepositoryTest extends TestCase {
 

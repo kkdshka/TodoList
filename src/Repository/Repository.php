@@ -9,7 +9,7 @@ use Kkdshka\TodoList\Model\Task;
 /**
  * Abstracts tasks persistence.
  * 
- * @author Ксю
+ * @author kkdshka
  */
 interface Repository {
     
