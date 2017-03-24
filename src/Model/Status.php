@@ -1,5 +1,4 @@
 <?php
-
 declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Model;
@@ -26,4 +25,5 @@ class Status {
     public static function isStatus(string $status) : bool {
         return in_array($status, self::$statuses);
     }
+    
 }

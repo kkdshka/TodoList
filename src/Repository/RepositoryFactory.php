@@ -1,5 +1,4 @@
 <?php
-
 declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Repository;
@@ -15,6 +14,7 @@ class RepositoryFactory {
     
     /**
      * Creates new repository according to connection URL.
+     * 
      * @param string $connectionUrl 
      * @return \Kkdshka\TodoList\Repository\Repository
      * @throws InvalidArgumentException When connection URL with unknown protocol or without protocol was given.
@@ -35,6 +35,6 @@ class RepositoryFactory {
             default:
                 throw new InvalidArgumentException("Unknown protocol $protocol in url $connectionUrl");
         }
-        
     }
+    
 }

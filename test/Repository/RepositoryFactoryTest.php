@@ -64,4 +64,5 @@ class RepositoryFactoryTest extends TestCase {
     public function shouldNotCreateRepositoryWithoutProtocol() {
         $this->factory->create("path/to/file/without/protocol");
     }
+    
 }

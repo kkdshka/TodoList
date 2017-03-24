@@ -42,7 +42,10 @@ class CsvRepositoryTest extends TestCase {
                 
         $this->repository->create($task);
         
-        $this->assertEquals("1,\"Test subject\",,3,New\n", file_get_contents($this->filename));
+        $this->assertEquals(
+            "1,\"Test subject\",,3,New\n", 
+            file_get_contents($this->filename)
+        );
     }
     
     /**
@@ -56,7 +59,10 @@ class CsvRepositoryTest extends TestCase {
         $task->setPriority(5);
         $this->repository->update($task);
         
-        $this->assertEquals("1,\"Test subject\",,5,New\n", file_get_contents($this->filename));
+        $this->assertEquals(
+            "1,\"Test subject\",,5,New\n", 
+            file_get_contents($this->filename)
+        );
     }
     
     /**
@@ -97,7 +103,10 @@ class CsvRepositoryTest extends TestCase {
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
         
-        $this->assertEquals("1,\"First test subject\",,3,New\n2,\"Second test subject\",,3,New\n", file_get_contents($this->filename)); 
+        $this->assertEquals(
+            "1,\"First test subject\",,3,New\n2,\"Second test subject\",,3,New\n", 
+            file_get_contents($this->filename)
+        ); 
     }
     
     /**
@@ -113,7 +122,10 @@ class CsvRepositoryTest extends TestCase {
         $firstTask->setPriority(5);
         $this->repository->update($firstTask);
         
-        $this->assertEquals("1,\"First test subject\",,5,New\n2,\"Second test subject\",,3,New\n", file_get_contents($this->filename));
+        $this->assertEquals(
+            "1,\"First test subject\",,5,New\n2,\"Second test subject\",,3,New\n", 
+            file_get_contents($this->filename)
+        );
     }
     
     /**
@@ -128,7 +140,10 @@ class CsvRepositoryTest extends TestCase {
         $this->repository->create($secondTask);
         $this->repository->delete($firstTask);
         
-        $this->assertEquals("2,\"Second test subject\",,3,New\n", file_get_contents($this->filename));
+        $this->assertEquals(
+            "2,\"Second test subject\",,3,New\n", 
+            file_get_contents($this->filename)
+        );
     }
     
     /**
@@ -239,4 +254,5 @@ class CsvRepositoryTest extends TestCase {
         $repository = new CsvRepository(__DIR__ . '/../data/todolist.csv');
         $this->assertCount(3, $repository->getAll());
     }
+    
 }

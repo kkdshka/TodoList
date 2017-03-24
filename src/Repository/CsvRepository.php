@@ -1,5 +1,4 @@
 <?php
-
 declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Repository;
@@ -18,12 +17,14 @@ class CsvRepository implements Repository {
     
     /**
      * Contains next new id.
+     * 
      * @var int 
      */
     private $nextId;
     
     /**
      * Path to file where tasks will be saved.
+     * 
      * @var string 
      */
     private $tasksStoragePath;
@@ -31,18 +32,21 @@ class CsvRepository implements Repository {
     /**
      * Contains all tasks in array, where key is id of task.
      * ['task id' => 'task object']
+     * 
      * @var array
      */
     private $tasks;
     
     /**
      * Resource for starage file.
+     * 
      * @var resource
      */
     private $storageHandle;
     
     /**
      * Lock file or not.
+     * 
      * @var bool 
      */
     private $lockStorageFile;
@@ -83,7 +87,7 @@ class CsvRepository implements Repository {
     /**
      * {@inheritDoc}
      */
-    public function getAll(): array {
+    public function getAll() : array {
         return array_values($this->tasks);
     }
     
@@ -134,6 +138,7 @@ class CsvRepository implements Repository {
     
     /**
      * Ensures if task exicts in repository.
+     * 
      * @throws InvalidArgumentException When task doesn't have id.
      * @throws NotFoundException When task isn't in repository.
      */
@@ -148,6 +153,7 @@ class CsvRepository implements Repository {
             
     /**
      * Makes array of tasks from csv file.
+     * 
      * @return array All tasks.
      */
     private function getTasksFromCsv() : array {
@@ -173,6 +179,7 @@ class CsvRepository implements Repository {
     
     /**
      * Makes array of tasks from tasks data.
+     * 
      * @param array $tasksData
      * @return Task
      */
@@ -185,15 +192,23 @@ class CsvRepository implements Repository {
     
     /**
      * Make task data from object task.
+     * 
      * @param Task $task
      * @return array Task data
      */
     private function toArray(Task $task) : array {
-        return [$task->getId(), $task->getSubject(), $task->getDescription(), $task->getPriority(), $task->getStatus()];
+        return [
+            $task->getId(), 
+            $task->getSubject(), 
+            $task->getDescription(), 
+            $task->getPriority(), 
+            $task->getStatus()
+        ];
     }
     
     /**
      * Return next id.
+     * 
      * @return int Next id.
      */
     private function determineNextId() : int {
@@ -202,4 +217,5 @@ class CsvRepository implements Repository {
         }
         return max(array_keys($this->tasks)) + 1;
     }
+    
 }

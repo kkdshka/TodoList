@@ -1,5 +1,4 @@
 <?php
-
 declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Model;
@@ -11,12 +10,14 @@ use Kkdshka\TodoList\{
 
 /**
  * Manages tasks.
+ * 
  * @author kkdshka
  */
 class TaskManager {
 
     /**
      * Task repository.
+     * 
      * @var Repository
      */
     private $repository;
@@ -44,6 +45,7 @@ class TaskManager {
     
     /**
      * Deletes given task.
+     * 
      * @param Task $task Task to delete.
      */
     public function delete(Task $task) {
@@ -53,16 +55,18 @@ class TaskManager {
     /**
      * @return Tasks[] All tasks.
      */
-    public function getAll(): array {
+    public function getAll() : array {
         return $this->repository->getAll();
     }
 
     /**
      * Returns task with given id.
+     * 
      * @param int $id Given id.
      * @return Task Task with given id.
      */
-    public function findTaskById(int $id): Task {
+    public function findTaskById(int $id) : Task {
         return $this->repository->findTaskById($id);
     }
+    
 }

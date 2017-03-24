@@ -46,9 +46,16 @@ class SqliteRepositoryTest extends TestCase {
 
         $this->repository->create($task);
 
-        $this->assertEquals([
-            ['id' => '1', 'subject' => "Test subject", 'description' => '', 'priority' => 3, 'status' => 'New']
-                ], $this->getAll());
+        $this->assertEquals(
+            [[
+                'id' => '1', 
+                'subject' => "Test subject", 
+                'description' => '', 
+                'priority' => 3, 
+                'status' => 'New'
+            ]], 
+            $this->getAll()
+        );
     }
 
     /**
@@ -61,9 +68,18 @@ class SqliteRepositoryTest extends TestCase {
         $this->repository->create($task);
         $task->setPriority(5);
         $this->repository->update($task);
-        $this->assertEquals([
-            ['id' => '1', 'subject' => "Test subject", 'description' => '', 'priority' => 5, 'status' => 'New']
-                ], $this->getAll());
+        $this->assertEquals(
+            [
+                [
+                    'id' => '1', 
+                    'subject' => "Test subject", 
+                    'description' => '', 
+                    'priority' => 5, 
+                    'status' => 'New'
+                ]
+            ], 
+            $this->getAll()
+        );
     }
 
     /**
@@ -105,10 +121,25 @@ class SqliteRepositoryTest extends TestCase {
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
 
-        $this->assertEquals([
-            ['id' => '1', 'subject' => "First test subject", 'description' => "", 'priority' => 3, 'status' => 'New'],
-            ['id' => '2', 'subject' => "Second test subject", 'description' => "", 'priority' => 3, 'status' => 'New']
-                ], $this->getAll());
+        $this->assertEquals(
+            [
+                [
+                    'id' => '1', 
+                    'subject' => "First test subject", 
+                    'description' => "", 
+                    'priority' => 3, 
+                    'status' => 'New'
+                ],
+                [
+                    'id' => '2', 
+                    'subject' => "Second test subject", 
+                    'description' => "", 
+                    'priority' => 3, 
+                    'status' => 'New'
+                ]
+            ], 
+            $this->getAll()
+        );
     }
 
     /**
@@ -125,10 +156,25 @@ class SqliteRepositoryTest extends TestCase {
         $firstTask->setPriority(5);
         $this->repository->update($firstTask);
         
-        $this->assertEquals([
-            ['id' => '1', 'subject' => "First test subject", 'description' => "", 'priority' => 5, 'status' => 'New'],
-            ['id' => '2', 'subject' => "Second test subject", 'description' => "", 'priority' => 3, 'status' => 'New']
-                ], $this->getAll());
+        $this->assertEquals(
+            [
+                [
+                    'id' => '1', 
+                    'subject' => "First test subject", 
+                    'description' => "", 
+                    'priority' => 5, 
+                    'status' => 'New'
+                ],
+                [
+                    'id' => '2', 
+                    'subject' => "Second test subject", 
+                    'description' => "", 
+                    'priority' => 3, 
+                    'status' => 'New'
+                ]
+            ], 
+            $this->getAll()
+        );
     }
     
     /**
@@ -144,9 +190,18 @@ class SqliteRepositoryTest extends TestCase {
         $this->repository->create($secondTask);
         $this->repository->delete($firstTask);
 
-        $this->assertEquals([
-            ['id' => '2', 'subject' => "Second test subject", 'description' => "", 'priority' => 3, 'status' => 'New']
-                ], $this->getAll());
+        $this->assertEquals(
+            [
+                [
+                    'id' => '2', 
+                    'subject' => "Second test subject", 
+                    'description' => "", 
+                    'priority' => 3, 
+                    'status' => 'New'
+                ]
+            ], 
+            $this->getAll()
+        );
     }
 
     /**
@@ -252,4 +307,5 @@ class SqliteRepositoryTest extends TestCase {
 
         $this->assertEquals($firstTask, $this->repository->findTaskById(1));
     }
+    
 }

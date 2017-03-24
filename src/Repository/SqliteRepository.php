@@ -1,5 +1,4 @@
 <?php
-
 declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Repository;
@@ -12,12 +11,14 @@ use Exception;
 
 /**
  * Sqlite repository.
+ * 
  * @author kkdshka
  */
 class SqliteRepository implements Repository {
 
     /**
      * PDO object.
+     * 
      * @var PDO
      */
     private $pdo;
@@ -29,11 +30,11 @@ class SqliteRepository implements Repository {
         $this->pdo = new PDO($connectionUrl);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $query = "CREATE TABLE IF NOT EXISTS tasks("
-                . "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-                . "subject VARCHAR NOT NULL, "
-                . "description TEXT, "
-                . "status VARCHAR NOT NULL, "
-                . "priority INTEGER NOT NULL)";
+            . "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+            . "subject VARCHAR NOT NULL, "
+            . "description TEXT, "
+            . "status VARCHAR NOT NULL, "
+            . "priority INTEGER NOT NULL)";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
     }
@@ -43,7 +44,10 @@ class SqliteRepository implements Repository {
      */
     public function create(Task $task) {
         $this->inTransaction(function() use ($task) {
-            $stmt = $this->pdo->prepare("INSERT INTO tasks (subject, description, priority, status) VALUES (:subject, :description, :priority, :status)");
+            $stmt = $this->pdo->prepare(
+                "INSERT INTO tasks (subject, description, priority, status) "
+                . "VALUES (:subject, :description, :priority, :status)"
+            );
             $stmt->execute($this->toStmtParams($task));
             $task->setId((int) $this->pdo->lastInsertId());
         });
@@ -54,7 +58,13 @@ class SqliteRepository implements Repository {
      */
     public function update(Task $task) {
         $this->assertExists($task);
-        $stmt = $this->pdo->prepare("UPDATE tasks SET subject = :subject, description = :description, priority = :priority, status = :status WHERE id = :id");
+        $stmt = $this->pdo->prepare(
+            "UPDATE tasks SET "
+            . "subject = :subject, "
+            . "description = :description, "
+            . "priority = :priority, "
+            . "status = :status "
+            . "WHERE id = :id");
         $stmt->execute($this->toStmtParams($task));
     }
 
@@ -70,7 +80,7 @@ class SqliteRepository implements Repository {
     /**
      * {@inheritDoc}
      */
-    public function getAll(): array {
+    public function getAll() : array {
         $stmt = $this->pdo->query("SELECT * FROM tasks");
         $tasksData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -80,7 +90,7 @@ class SqliteRepository implements Repository {
     /**
      * {@inheritDoc}
      */
-    public function findTaskById(int $id): Task {
+    public function findTaskById(int $id) : Task {
         $stmt = $this->pdo->query("SELECT * FROM tasks WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $taskData = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -118,6 +128,7 @@ class SqliteRepository implements Repository {
 
     /**
      * Ensures if task exicts in repository.
+     * 
      * @throws InvalidArgumentException When task doesn't have id.
      * @throws NotFoundException When task isn't in repository.
      */
@@ -135,10 +146,11 @@ class SqliteRepository implements Repository {
 
     /**
      * Extracts data from task and returns it as array.
+     * 
      * @param Task $task Task object.
      * @return array Task data.
      */
-    private function toStmtParams(Task $task): array {
+    private function toStmtParams(Task $task) : array {
         $params = [
             'subject' => $task->getSubject(),
             'description' => $task->getDescription(),
@@ -153,12 +165,19 @@ class SqliteRepository implements Repository {
 
     /**
      * Return task from task data.
+     * 
      * @param array $taskData Task data.
      * @return Task object.
      */
-    private function toTask(array $taskData): Task {
-        $task = new Task($taskData['subject'], $taskData['description'], (int) $taskData['priority'], $taskData['status']);
+    private function toTask(array $taskData) : Task {
+        $task = new Task(
+            $taskData['subject'], 
+            $taskData['description'], 
+            (int) $taskData['priority'], 
+            $taskData['status']
+        );
         $task->setId((int) $taskData['id']);
         return $task;
     }
+    
 }

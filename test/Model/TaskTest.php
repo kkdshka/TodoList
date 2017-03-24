@@ -70,4 +70,5 @@ class TaskTest extends TestCase {
         $task = new Task('Test subject');
         $task->setStatus('strange');
     }
+    
 }

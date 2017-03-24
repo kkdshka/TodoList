@@ -1,5 +1,4 @@
 <?php
-
 declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Model;
@@ -31,23 +30,23 @@ class Task {
         $this->setStatus($status);
     }
 
-    public function getSubject(): string {
+    public function getSubject() : string {
         return $this->subject;
     }
 
-    public function getDescription(): string {
+    public function getDescription() : string {
         return $this->description;
     }
 
-    public function getPriority(): int {
+    public function getPriority() : int {
         return $this->priority;
     }
 
-    public function getStatus(): string {
+    public function getStatus() : string {
         return $this->status;
     }
 
-    public function getId(): int {
+    public function getId() : int {
         return $this->id;
     }
 
@@ -80,7 +79,8 @@ class Task {
         $this->id = $id;
     }
 
-    public function hasId(): bool {
+    public function hasId() : bool {
         return isset($this->id);
     }
+    
 }

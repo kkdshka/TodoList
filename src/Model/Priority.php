@@ -1,5 +1,4 @@
 <?php
-
 declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Model;
@@ -25,7 +24,7 @@ class Priority {
         self::LOWEST
     ];
 
-    public static function isPriority(int $priority): bool {
+    public static function isPriority(int $priority) : bool {
         return in_array($priority, self::$priorities);
     }
 

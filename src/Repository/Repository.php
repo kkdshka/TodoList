@@ -1,5 +1,4 @@
 <?php
-
 declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Repository;
@@ -15,18 +14,21 @@ interface Repository {
     
     /**
      * Creates new task.
+     * 
      * @param Task $task Task to create.
      */
     function create(Task $task);
     
     /**
      * Updates existed task.
+     * 
      * @param Task $task Task to update.
      */
     function update(Task $task);
     
     /**
      * Deletes task.
+     * 
      * @param Task $task Task to delete.
      */
     function delete(Task $task);
@@ -43,8 +45,10 @@ interface Repository {
     
     /**
      * Returns task with given id.
+     * 
      * @param int $id Task id.
      * @throws NotFoundException If task with given id doesn't exists.
      */
     function findTaskById(int $id) : Task;
+    
 }
