@@ -65,17 +65,18 @@ class TaskSqliteRepository {
      * @param Task $task Task to update.
      */
     public function update(Task $task) {
-        // :TODO: wrap into transaction
-        $this->assertExists($task);
-        $stmt = $this->pdo->prepare(
-            "UPDATE tasks SET "
-            . "subject = :subject, "
-            . "description = :description, "
-            . "priority = :priority, "
-            . "status = :status,"
-            . "user_id = :user_id "
-            . "WHERE id = :id");
-        $stmt->execute($this->toStmtParams($task));
+        $this->inTransaction(function() use ($task) {
+            $this->assertExists($task);
+            $stmt = $this->pdo->prepare(
+                "UPDATE tasks SET "
+                . "subject = :subject, "
+                . "description = :description, "
+                . "priority = :priority, "
+                . "status = :status,"
+                . "user_id = :user_id "
+                . "WHERE id = :id");
+            $stmt->execute($this->toStmtParams($task));
+        });
     }
 
     /**
@@ -84,10 +85,11 @@ class TaskSqliteRepository {
      * @param Task $task Task to delete.
      */
     public function delete(Task $task) {
-        // :TODO: wrap into transaction
-        $this->assertExists($task);
-        $stmt = $this->pdo->prepare("DELETE FROM tasks WHERE id = :id");
-        $stmt->execute(['id' => $task->getId()]);
+        $this->inTransaction(function() use ($task) {
+            $this->assertExists($task);
+            $stmt = $this->pdo->prepare("DELETE FROM tasks WHERE id = :id");
+            $stmt->execute(['id' => $task->getId()]);
+        });
     }
 
     /**
