@@ -5,7 +5,8 @@ namespace Kkdshka\TodoList\Model;
 
 use Kkdshka\TodoList\Model\{
     Status,
-    Priority
+    Priority,
+    User
 };
 use BadMethodCallException;
 use InvalidArgumentException;
@@ -22,12 +23,14 @@ class Task {
     private $description;
     private $priority;
     private $status;
+    private $user;
 
-    public function __construct(string $subject, string $description = "", int $priority = 3, string $status = "New") {
+    public function __construct(User $user, string $subject, string $description = "", int $priority = 3, string $status = "New") {
         $this->subject = $subject;
         $this->description = $description;
         $this->setPriority($priority);
         $this->setStatus($status);
+        $this->user = $user;
     }
 
     public function getSubject() : string {
@@ -81,6 +84,10 @@ class Task {
 
     public function hasId() : bool {
         return isset($this->id);
+    }
+    
+    public function getUser() : User {
+        return $this->user;
     }
     
 }

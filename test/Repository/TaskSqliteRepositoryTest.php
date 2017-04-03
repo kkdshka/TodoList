@@ -4,22 +4,30 @@ declare (strict_types = 1);
 namespace Kkdshka\TodoList\Repository;
 
 use PHPUnit\Framework\TestCase;
-use Kkdshka\TodoList\Model\Task;
+use Kkdshka\TodoList\Model\{
+    Task,
+    User
+};
 use PDO;
+use Phake;
 
 /**
  * Description of CsvRepositoryTest
  *
  * @author kkdshka
  */
-class SqliteRepositoryTest extends TestCase {
+class TaskSqliteRepositoryTest extends TestCase {
 
     private $filename;
     private $repository;
+    private $user;
 
     public function setUp() {
         $this->filename = tempnam(sys_get_temp_dir(), 'sqlite');
-        $this->repository = new SqliteRepository("sqlite:" . $this->filename);
+        $this->repository = new TaskSqliteRepository("sqlite:" . $this->filename);
+        $this->user = Phake::mock(User::class);
+        Phake::when($this->user)->getId()->thenReturn(1);
+        Phake::when($this->user)->getLogin()->thenReturn('User');
     }
 
     public function tearDown() {
@@ -42,7 +50,7 @@ class SqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::create
      */
     public function shouldCreateNewTask() {
-        $task = new Task("Test subject");
+        $task = new Task($this->user, "Test subject");
 
         $this->repository->create($task);
 
@@ -52,7 +60,8 @@ class SqliteRepositoryTest extends TestCase {
                 'subject' => "Test subject", 
                 'description' => '', 
                 'priority' => 3, 
-                'status' => 'New'
+                'status' => 'New',
+                'user_id' => '1'
             ]], 
             $this->getAll()
         );
@@ -64,7 +73,7 @@ class SqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::update
      */
     public function shouldUpdateExistedTask() {
-        $task = new Task("Test subject");
+        $task = new Task($this->user, "Test subject");
         $this->repository->create($task);
         $task->setPriority(5);
         $this->repository->update($task);
@@ -75,7 +84,8 @@ class SqliteRepositoryTest extends TestCase {
                     'subject' => "Test subject", 
                     'description' => '', 
                     'priority' => 5, 
-                    'status' => 'New'
+                    'status' => 'New',
+                    'user_id' => '1'
                 ]
             ], 
             $this->getAll()
@@ -88,7 +98,7 @@ class SqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::delete
      */
     public function shouldDeleteExistedTask() {
-        $task = new Task("Test subject");
+        $task = new Task($this->user, "Test subject");
 
         $this->repository->create($task);
         $this->repository->delete($task);
@@ -98,25 +108,27 @@ class SqliteRepositoryTest extends TestCase {
 
     /**
      * @test
+     * @depends shouldCreateNewTask
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::getAll
      */
-    public function shouldGetAllTasks() {
-        $firstTask = new Task("First test subject");
-        $secondTask = new Task("Second test subject");
+    public function shouldGetByUserTasks() {
+        $firstTask = new Task($this->user, "First test subject");
+        $secondTask = new Task($this->user, "Second test subject");
 
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
 
-        $this->assertEquals([$firstTask, $secondTask], $this->repository->getAll());
+        $this->assertEquals([$firstTask, $secondTask], $this->repository->getUserTasks($this->user));
     }
 
     /**
      * @test
+     * @depends shouldCreateNewTask
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::create
      */
     public function shouldCreateTwoNewTasks() {
-        $firstTask = new Task("First test subject");
-        $secondTask = new Task("Second test subject");
+        $firstTask = new Task($this->user, "First test subject");
+        $secondTask = new Task($this->user, "Second test subject");
 
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
@@ -128,14 +140,16 @@ class SqliteRepositoryTest extends TestCase {
                     'subject' => "First test subject", 
                     'description' => "", 
                     'priority' => 3, 
-                    'status' => 'New'
+                    'status' => 'New',
+                    'user_id' => '1'
                 ],
                 [
                     'id' => '2', 
                     'subject' => "Second test subject", 
                     'description' => "", 
                     'priority' => 3, 
-                    'status' => 'New'
+                    'status' => 'New',
+                    'user_id' => '1'
                 ]
             ], 
             $this->getAll()
@@ -148,8 +162,8 @@ class SqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::update
      */
     public function shouldNotAffectOtherTasksWhenUpdate() {
-        $firstTask = new Task("First test subject");
-        $secondTask = new Task("Second test subject");
+        $firstTask = new Task($this->user, "First test subject");
+        $secondTask = new Task($this->user, "Second test subject");
         
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
@@ -163,14 +177,16 @@ class SqliteRepositoryTest extends TestCase {
                     'subject' => "First test subject", 
                     'description' => "", 
                     'priority' => 5, 
-                    'status' => 'New'
+                    'status' => 'New',
+                    'user_id' => '1'
                 ],
                 [
                     'id' => '2', 
                     'subject' => "Second test subject", 
                     'description' => "", 
                     'priority' => 3, 
-                    'status' => 'New'
+                    'status' => 'New',
+                    'user_id' => '1'
                 ]
             ], 
             $this->getAll()
@@ -183,8 +199,8 @@ class SqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::delete
      */
     public function shouldNotAffectOtherTasksWhenDelete() {
-        $firstTask = new Task("First test subject");
-        $secondTask = new Task("Second test subject");
+        $firstTask = new Task($this->user, "First test subject");
+        $secondTask = new Task($this->user, "Second test subject");
 
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
@@ -197,7 +213,8 @@ class SqliteRepositoryTest extends TestCase {
                     'subject' => "Second test subject", 
                     'description' => "", 
                     'priority' => 3, 
-                    'status' => 'New'
+                    'status' => 'New',
+                    'user_id' => '1'
                 ]
             ], 
             $this->getAll()
@@ -207,34 +224,34 @@ class SqliteRepositoryTest extends TestCase {
     /**
      * @test
      * @depends shouldCreateNewTask
-     * @covers Kkdshka\TodoList\Repository\SqliteRepository::getAll
+     * @covers Kkdshka\TodoList\Repository\SqliteRepository::getUserTasks
      */
-    public function shouldReturnNewTasksWhenGetAll() {
-        $firstTask = new Task("First test subject");
-        $secondTask = new Task("Second test subject");
+    public function shouldReturnNewUserTasks() {
+        $firstTask = new Task($this->user, "First test subject");
+        $secondTask = new Task($this->user, "Second test subject");
 
         $this->repository->create($firstTask);
-        $this->assertEquals([$firstTask], $this->repository->getAll());
+        $this->assertEquals([$firstTask], $this->repository->getUserTasks($this->user));
 
         $this->repository->create($secondTask);
-        $this->assertEquals([$firstTask, $secondTask], $this->repository->getAll());
+        $this->assertEquals([$firstTask, $secondTask], $this->repository->getUserTasks($this->user));
     }
 
     /**
      * @test
      * @depends shouldCreateNewTask
-     * @covers Kkdshka\TodoList\Repository\SqliteRepository::getAll
+     * @covers Kkdshka\TodoList\Repository\SqliteRepository::getUserTasks
      */
-    public function shouldNotReturnDeletedTasksWhenGetAll() {
-        $firstTask = new Task("First test subject");
-        $secondTask = new Task("Second test subject");
+    public function shouldNotReturnDeletedUserTasks() {
+        $firstTask = new Task($this->user, "First test subject");
+        $secondTask = new Task($this->user, "Second test subject");
 
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
-        $this->assertEquals([$firstTask, $secondTask], $this->repository->getAll());
+        $this->assertEquals([$firstTask, $secondTask], $this->repository->getUserTasks($this->user));
 
         $this->repository->delete($secondTask);
-        $this->assertEquals([$firstTask], $this->repository->getAll());
+        $this->assertEquals([$firstTask], $this->repository->getUserTasks($this->user));
     }
 
     /**
@@ -243,7 +260,7 @@ class SqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::update
      */
     public function shouldNotUpdateNotExistedTask() {
-        $task = new Task("Test subject");
+        $task = new Task($this->user, "Test subject");
         $task->setId(1);
         
         $this->repository->update($task);
@@ -255,7 +272,7 @@ class SqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::update
      */
     public function shouldNotUpdateUnsavedTask() {
-        $task = new Task("Test subject");
+        $task = new Task($this->user, "Test subject");
         
         $this->repository->update($task);
     }
@@ -266,7 +283,7 @@ class SqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::delete
      */
     public function shouldNotDeleteNotExistedTask() {
-        $task = new Task("Test subject");
+        $task = new Task($this->user, "Test subject");
         $task->setId(1);
 
         $this->repository->delete($task);
@@ -278,7 +295,7 @@ class SqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::delete
      */
     public function shouldNotDeleteUnsavedTask() {
-        $task = new Task("Test subject");
+        $task = new Task($this->user, "Test subject");
 
         $this->repository->delete($task);
     }
@@ -287,25 +304,35 @@ class SqliteRepositoryTest extends TestCase {
      * @test
      * @expectedException Kkdshka\TodoList\Repository\NotFoundException
      * @expectedExceptionMessage Can't find task with id = 1
-     * @covers Kkdshka\TodoList\Repository\SqliteRepository::findTaskById
+     * @covers Kkdshka\TodoList\Repository\SqliteRepository::find
      */
-    public function shouldNotFindUnsavedTaskById() {
-        $this->repository->findTaskById(1);
+    public function shouldNotFindUnsavedTask() {
+        $this->repository->find(1, $this->user);
     }
 
     /**
      * @test
      * @depends shouldCreateNewTask
-     * @covers Kkdshka\TodoList\Repository\SqliteRepository::findTaskById
+     * @covers Kkdshka\TodoList\Repository\SqliteRepository::find
      */
-    public function shouldFindTaskById() {
-        $firstTask = new Task("First test subject");
-        $secondTask = new Task("Second test subject");
+    public function shouldFindTask() {
+        $firstTask = new Task($this->user, "First test subject");
+        $secondTask = new Task($this->user, "Second test subject");
 
         $this->repository->create($firstTask);
         $this->repository->create($secondTask);
 
-        $this->assertEquals($firstTask, $this->repository->findTaskById(1));
+        $this->assertEquals($firstTask, $this->repository->find(1, $this->user));
+    }
+    
+    /**
+     * @test
+     * @covers Kkdshka\TodoList\Repository\SqliteRepository::getUserTasks
+     * @expectedException Kkdshka\TodoList\Repository\NotFoundException
+     * @expectedExceptionMessage Can't find tasks for user User.
+     */
+    public function shouldNotFindUnexistedUserTasks() {
+        $this->repository->getUserTasks($this->user);
     }
     
 }

@@ -3,18 +3,20 @@ declare (strict_types = 1);
 
 namespace Kkdshka\TodoList\Repository;
 
-use Kkdshka\TodoList\Model\Task;
-use Kkdshka\TodoList\Repository\Repository;
+use Kkdshka\TodoList\Model\{
+    Task,
+    User
+};
 use InvalidArgumentException;
 use PDO;
 use Exception;
 
 /**
- * Sqlite repository.
+ * Sqlite repository for tasks.
  * 
  * @author kkdshka
  */
-class SqliteRepository implements Repository {
+class TaskSqliteRepository {
 
     /**
      * PDO object.
@@ -34,19 +36,23 @@ class SqliteRepository implements Repository {
             . "subject VARCHAR NOT NULL, "
             . "description TEXT, "
             . "status VARCHAR NOT NULL, "
-            . "priority INTEGER NOT NULL)";
+            . "priority INTEGER NOT NULL, "
+            . "user_id INTEGER NOT NULL)";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
     }
 
+    
     /**
-     * {@inheritDoc}
+     * Saves new task in db.
+     * 
+     * @param Task $task Task to save.
      */
     public function create(Task $task) {
         $this->inTransaction(function() use ($task) {
             $stmt = $this->pdo->prepare(
-                "INSERT INTO tasks (subject, description, priority, status) "
-                . "VALUES (:subject, :description, :priority, :status)"
+                "INSERT INTO tasks (subject, description, priority, status, user_id) "
+                . "VALUES (:subject, :description, :priority, :status, :user_id)"
             );
             $stmt->execute($this->toStmtParams($task));
             $task->setId((int) $this->pdo->lastInsertId());
@@ -54,53 +60,74 @@ class SqliteRepository implements Repository {
     }
 
     /**
-     * {@inheritDoc}
+     * Updates task.
+     * 
+     * @param Task $task Task to update.
      */
     public function update(Task $task) {
+        // :TODO: wrap into transaction
         $this->assertExists($task);
         $stmt = $this->pdo->prepare(
             "UPDATE tasks SET "
             . "subject = :subject, "
             . "description = :description, "
             . "priority = :priority, "
-            . "status = :status "
+            . "status = :status,"
+            . "user_id = :user_id "
             . "WHERE id = :id");
         $stmt->execute($this->toStmtParams($task));
     }
 
     /**
-     * {@inheritDoc}
+     * Deletes task from db.
+     * 
+     * @param Task $task Task to delete.
      */
     public function delete(Task $task) {
+        // :TODO: wrap into transaction
         $this->assertExists($task);
         $stmt = $this->pdo->prepare("DELETE FROM tasks WHERE id = :id");
         $stmt->execute(['id' => $task->getId()]);
     }
 
     /**
-     * {@inheritDoc}
+     * Finds task by id.
+     * 
+     * @param int $id Task id.
+     * @param User $author Task author.
+     * @return Task
+     * @throws NotFoundException When task with given id doesn't exist.
      */
-    public function getAll() : array {
-        $stmt = $this->pdo->query("SELECT * FROM tasks");
-        $tasksData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return array_map([$this, "toTask"], $tasksData);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function findTaskById(int $id) : Task {
-        $stmt = $this->pdo->query("SELECT * FROM tasks WHERE id = :id");
-        $stmt->execute(['id' => $id]);
+    public function find(int $id, User $author) : Task {
+        $stmt = $this->pdo->query("SELECT * FROM tasks WHERE id = :id AND user_id = :user_id LIMIT 1");
+        $stmt->execute(['id' => $id, 'user_id' => $author->getId()]);
         $taskData = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($taskData)) {
             throw new NotFoundException("Can't find task with id = $id");
-        } else {
-            return array_map([$this, "toTask"], $taskData)[0];
-        }
+        } 
+        return $this->toTask($taskData[0], $author);
     }
 
+    /**
+     * Returns all user's tasks.
+     * 
+     * @param User $author Tasks author.
+     * @return array Tasks.
+     * @throws NotFoundException When no tasks for given user were found.
+     */
+    public function getUserTasks(User $author) : array {
+        $query = "SELECT * FROM tasks WHERE user_id = :user_id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute(['user_id' => $author->getId()]);
+        $taskData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($taskData)) {
+            throw new NotFoundException("Can't find tasks for user {$author->getLogin()}.");
+        } 
+        return array_map(function ($taskData) use ($author)  {
+            return $this->toTask($taskData, $author);
+        }, $taskData);
+    }
+    
     /**
      * Close PDO.
      */
@@ -151,11 +178,13 @@ class SqliteRepository implements Repository {
      * @return array Task data.
      */
     private function toStmtParams(Task $task) : array {
+        $user = $task->getUser();
         $params = [
             'subject' => $task->getSubject(),
             'description' => $task->getDescription(),
             'priority' => $task->getPriority(),
-            'status' => $task->getStatus()
+            'status' => $task->getStatus(),
+            'user_id' => $user->getId()
         ];
         if ($task->hasId()) {
             $params['id'] = $task->getId();
@@ -169,8 +198,9 @@ class SqliteRepository implements Repository {
      * @param array $taskData Task data.
      * @return Task object.
      */
-    private function toTask(array $taskData) : Task {
+    private function toTask(array $taskData, User $user) : Task {
         $task = new Task(
+            $user,
             $taskData['subject'], 
             $taskData['description'], 
             (int) $taskData['priority'], 

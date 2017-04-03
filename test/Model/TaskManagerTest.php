@@ -5,7 +5,7 @@ namespace Kkdshka\TodoList\Model;
 
 use PHPUnit\Framework\TestCase;
 use Phake;
-use Kkdshka\TodoList\Repository\Repository;
+use Kkdshka\TodoList\Repository\TaskSqliteRepository;
 use Kkdshka\TodoList\Model\Task;
 
 /**
@@ -13,18 +13,24 @@ use Kkdshka\TodoList\Model\Task;
  */
 class TaskManagerTest extends TestCase {
     
+    private $task;
+    private $repository;
+    private $taskManager;
+    
+    public function setUp() {
+        $this->task = Phake::mock(Task::class);
+        $this->repository = Phake::mock(TaskSqliteRepository::class);
+        $this->taskManager = new TaskManager($this->repository);
+    }
+    
     /**
      * @test
      * @covers Kkdshka\TodoList\Model\TaskManager::create
      */
     public function shouldCreateTask() {
-        $repository = Phake::mock(Repository::class);
-        $task = new Task('Test subject');
-        $taskManager = new TaskManager($repository);
+        $this->taskManager->create($this->task);
         
-        $taskManager->create($task);
-        
-        Phake::verify($repository)->create(new Task('Test subject'));
+        Phake::verify($this->repository)->create($this->task);
     }
 
     /**
@@ -32,13 +38,9 @@ class TaskManagerTest extends TestCase {
      * @covers Kkdshka\TodoList\Model\TaskManager::update
      */
     public function shouldUpdateTask() {
-        $repository = Phake::mock(Repository::class);
-        $task = new Task('Test subject');
-        $taskManager = new TaskManager($repository);
+        $this->taskManager->update($this->task);
         
-        $taskManager->update($task);
-        
-        Phake::verify($repository)->update(new Task('Test subject'));
+        Phake::verify($this->repository)->update($this->task);
     }
     
     /**
@@ -46,47 +48,35 @@ class TaskManagerTest extends TestCase {
      * @covers Kkdshka\TodoList\Model\TaskManager::delete
      */
     public function shouldDeleteTask() {
-        $repository = Phake::mock(Repository::class);
-        $task = Phake::mock(Task::class);
-        $taskManager = new TaskManager($repository);
+        $this->taskManager->delete($this->task);
         
-        $taskManager->delete($task);
-        
-        Phake::verify($repository)->delete($task);
+        Phake::verify($this->repository)->delete($this->task);
     }
 
     /**
      * @test
-     * @covers Kkdshka\TodoList\Model\TaskManager::getAll
+     * @covers Kkdshka\TodoList\Model\TaskManager::find
      */
-    public function shouldGetAllTasks() {
-        $repository = Phake::mock(Repository::class);
-        $taskManager = new TaskManager($repository);
-        $expectedTasks = [
-            Phake::mock(Task::class),
-            Phake::mock(Task::class)
-        ];
+    public function shouldFindTaskById() {
+        $user = Phake::mock(User::class);
         
-        Phake::when($repository)->getAll()->thenReturn($expectedTasks);
+        Phake::when($this->repository)->find(1, $user)->thenReturn($this->task);
         
-        $tasks = $taskManager->getAll();
-        
-        Phake::verify($repository)->getAll();
-        $this->assertEquals($expectedTasks, $tasks);
+        $this->assertEquals($this->task, $this->taskManager->find(1, $user));
     }
     
     /**
      * @test
-     * @covers Kkdshka\TodoList\Model\TaskManager::shouldFindTaskById
+     * @covers Kkdshka\TodoList\Model\TaskManager::getByUser
      */
-    public function shouldFindTaskById() {
-        $repository = Phake::mock(Repository::class);
-        $task = Phake::mock(Task::class);
-        $taskManager = new TaskManager($repository);
+    public function shouldGetByUser() {
+        $user = Phake::mock(User::class);
         
-        Phake::when($repository)->findTaskById(1)->thenReturn($task);
+        Phake::when($this->repository)->getUserTasks($user)->thenReturn([$this->task]);
         
-        $this->assertEquals($task, $taskManager->findTaskById(1));
+        $tasks = $this->taskManager->getUserTasks($user); 
+        Phake::verify($this->repository)->getUserTasks($user);
+        $this->assertEquals([$this->task], $tasks);
     }
     
 }

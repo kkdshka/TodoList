@@ -4,8 +4,9 @@ declare (strict_types = 1);
 namespace Kkdshka\TodoList\Model;
 
 use Kkdshka\TodoList\{
-    Repository\Repository,
-    Model\Task
+    Repository\TaskSqliteRepository,
+    Model\Task,
+    Model\User
 };
 
 /**
@@ -25,7 +26,7 @@ class TaskManager {
     /**
      * @param Repository $repository Task repository.
      */
-    public function __construct(Repository $repository) {
+    public function __construct(TaskSqliteRepository $repository) {
         $this->repository = $repository;
     }
 
@@ -53,20 +54,23 @@ class TaskManager {
     }
 
     /**
-     * @return Tasks[] All tasks.
-     */
-    public function getAll() : array {
-        return $this->repository->getAll();
-    }
-
-    /**
      * Returns task with given id.
      * 
      * @param int $id Given id.
      * @return Task Task with given id.
      */
-    public function findTaskById(int $id) : Task {
-        return $this->repository->findTaskById($id);
+    public function find(int $id, User $user) : Task {
+        return $this->repository->find($id, $user);
+    }
+    
+    /**
+     * Returns all user's tasks.
+     * 
+     * @param User $user Task author.
+     * @return array
+     */
+    public function getUserTasks(User $user) : array {
+        return $this->repository->getUserTasks($user);
     }
     
 }
