@@ -6,6 +6,7 @@ namespace Kkdshka\TodoList\Model;
 use PHPUnit\Framework\TestCase;
 use Phake;
 use Kkdshka\TodoList\Repository\UserSqliteRepository;
+use Kkdshka\TodoList\Repository\NotFoundException;
 
 /**
  * @author Ксю
@@ -59,4 +60,14 @@ class UserManagerTest extends TestCase {
         $this->userManager->register('user', 'password');
     }
     
+    /**
+     * @test
+     * @covers Kkdshka\TodoList\Model\UserManager::find
+     * @expectedException Kkdshka\TodoList\Model\NotFoundException
+     * @expectedExceptionMessage Can't find user with login - 'login'.
+     */
+    public function shouldNotFindUser() {
+        Phake::when($this->repository)->find('login')->thenThrow(new NotFoundException);
+        $this->userManager->find('login');
+    }
 }

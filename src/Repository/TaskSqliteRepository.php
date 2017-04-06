@@ -105,7 +105,7 @@ class TaskSqliteRepository {
         $stmt->execute(['id' => $id, 'user_id' => $author->getId()]);
         $taskData = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($taskData)) {
-            throw new NotFoundException("Can't find task with id = $id");
+            throw new NotFoundException("Can't find task with id = $id for {$author->getLogin()}");
         } 
         return $this->toTask($taskData[0], $author);
     }
@@ -123,7 +123,7 @@ class TaskSqliteRepository {
         $stmt->execute(['user_id' => $author->getId()]);
         $taskData = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if (empty($taskData)) {
-            throw new NotFoundException("Can't find tasks for user {$author->getLogin()}.");
+            return [];
         } 
         return array_map(function ($taskData) use ($author)  {
             return $this->toTask($taskData, $author);

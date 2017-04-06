@@ -8,6 +8,7 @@ use Kkdshka\TodoList\{
     Model\Task,
     Model\User
 };
+use Kkdshka\TodoList\Repository\NotFoundException as RepoNotFoundException;
 
 /**
  * Manages tasks.
@@ -60,7 +61,12 @@ class TaskManager {
      * @return Task Task with given id.
      */
     public function find(int $id, User $user) : Task {
-        return $this->repository->find($id, $user);
+        try {
+            return $this->repository->find($id, $user);
+        }
+        catch (RepoNotFoundException $e) {
+            throw new NotFoundException("Can't find task with id = $id for {$user->getLogin()}", 0, $e);
+        }
     }
     
     /**

@@ -10,6 +10,6 @@ use RuntimeException;
  *
  * @author kkdshka
  */
-class UserNotFoundException extends RuntimeException {
+class NotFoundException extends RuntimeException {
     
 }

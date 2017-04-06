@@ -328,11 +328,9 @@ class TaskSqliteRepositoryTest extends TestCase {
     /**
      * @test
      * @covers Kkdshka\TodoList\Repository\SqliteRepository::getUserTasks
-     * @expectedException Kkdshka\TodoList\Repository\NotFoundException
-     * @expectedExceptionMessage Can't find tasks for user User.
      */
     public function shouldNotFindUnexistedUserTasks() {
-        $this->repository->getUserTasks($this->user);
+        $this->assertEquals([], $this->repository->getUserTasks($this->user));
     }
     
 }

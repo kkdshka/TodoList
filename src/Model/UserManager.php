@@ -5,6 +5,7 @@ namespace Kkdshka\TodoList\Model;
 
 use Kkdshka\TodoList\Repository\UserSqliteRepository;
 use Kkdshka\TodoList\Model\User;
+use Kkdshka\TodoList\Repository\NotFoundException as RepoNotFoundException;
 
 /**
  * Manages user.
@@ -52,7 +53,12 @@ class UserManager {
      * @return User
      */
     public function find(string $login) : User {
-        return $this->repository->find($login);
+        try {
+            return $this->repository->find($login);
+        }
+        catch (RepoNotFoundException $e) {
+            throw new NotFoundException("Can't find user with login - '$login'.", 0, $e);
+        }
     }
     
     /**
