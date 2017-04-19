@@ -55,10 +55,10 @@ class UserSqliteRepository {
      * @return bool
      */
     public function isLoginFree(string $login) : bool {
-        $stmt = $this->pdo->query("SELECT id FROM users WHERE login = :login");
+        $stmt = $this->pdo->query("SELECT COUNT(*) FROM users WHERE login = :login");
         $stmt->execute(['login' => $login]);
-        $count = $stmt->rowCount();
-        return ($count === 0) ? true : false;
+        $count = $stmt->fetchColumn();
+        return $count === "0";
     }
     
     /**

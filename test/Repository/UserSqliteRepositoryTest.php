@@ -60,7 +60,9 @@ class UserSqliteRepositoryTest extends TestCase {
      * @covers Kkdshka\TodoList\Repository\UserSqliteRepository::isLoginFree
      */
     public function shouldAllowUseUniqueLogin() {
-        $this->assertTrue($this->repository->isLoginFree('login'));
+        $user = new User('login', 'password');
+        $this->repository->create($user);
+        $this->assertTrue($this->repository->isLoginFree('login2'));
     }
     
     /**

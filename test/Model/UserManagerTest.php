@@ -55,7 +55,7 @@ class UserManagerTest extends TestCase {
      * @expectedExceptionMessage User with login user already exists.
      */
     public function shouldNotRegisterWhenLoginAlreadyExists() {
-        Phake::when($this->repository)->isLoginFree()->thenReturn(False);
+        Phake::when($this->repository)->isLoginFree('user')->thenReturn(false);
         
         $this->userManager->register('user', 'password');
     }
