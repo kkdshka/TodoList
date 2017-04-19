@@ -37,10 +37,10 @@ class UserManager {
      * @throws AlreadyExistsException When user with given login already exists.
      */
     public function register(string $login, string $plainPassword) : User {
-        $password = $this->hashPassword($plainPassword);
         if (!$this->repository->isLoginFree($login)) {
             throw new AlreadyExistsException("User with login $login already exists.");
         }
+        $password = $this->hashPassword($plainPassword);
         $user = new User($login, $password);
         $this->repository->create($user);
         return $user;
